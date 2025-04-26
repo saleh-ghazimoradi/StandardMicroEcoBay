@@ -1,7 +1,7 @@
 package domain
 
 type User struct {
-	ID         uint    `json:"id"`
+	ID         int64   `json:"id"`
 	Email      string  `json:"email"`
 	Password   string  `json:"-"`
 	FirstName  string  `json:"first_name"`
