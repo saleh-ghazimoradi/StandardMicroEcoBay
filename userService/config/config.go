@@ -1,6 +1,9 @@
 package config
 
-import "sync"
+import (
+	"github.com/caarlos0/env/v11"
+	"sync"
+)
 
 var (
 	instance *Config
@@ -17,6 +20,7 @@ type Config struct {
 func GetInstance() (*Config, error) {
 	once.Do(func() {
 		instance = &Config{}
+		initErr = env.Parse(instance)
 		if initErr != nil {
 			instance = nil
 		}
