@@ -9,7 +9,7 @@ import (
 // migrateDownCmd represents the migrateDown command
 var migrateDownCmd = &cobra.Command{
 	Use:   "migrateDown",
-	Short: "It rollbacks your database migration",
+	Short: "It rollbacks user-service database schema",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("migrateDown called")
 	},
