@@ -1,0 +1,89 @@
+services:
+  user_db_server:
+    image: postgres:latest
+    container_name: ${USER_POSTGRES_NAME}
+    ports:
+      - ${USER_POSTGRES_PORT}:5432
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_DB: ${USER_POSTGRES_NAME}
+      POSTGRES_USER: ${USER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${USER_POSTGRES_PASSWORD}
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+  product_db_server:
+    image: postgres:latest
+    container_name: ${PRODUCT_POSTGRES_NAME}
+    ports:
+      - ${PRODUCT_POSTGRES_PORT}:5432
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_DB: ${PRODUCT_POSTGRES_NAME}
+      POSTGRES_USER: ${PRODUCT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PRODUCT_POSTGRES_PASSWORD}
+    volumes:
+      - product-db-data:/var/lib/postgresql/data
+
+  order_db_server:
+    image: postgres:latest
+    container_name: ${ORDER_POSTGRES_NAME}
+    ports:
+      - ${ORDER_POSTGRES_PORT}:5432
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_DB: ${ORDER_POSTGRES_NAME}
+      POSTGRES_USER: ${ORDER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ORDER_POSTGRES_PASSWORD}
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+
+  payment_db_server:
+    image: postgres:latest
+    container_name: ${PAYMENT_POSTGRES_NAME}
+    ports:
+      - ${PAYMENT_POSTGRES_PORT}:5432
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_DB: ${PAYMENT_POSTGRES_NAME}
+      POSTGRES_USER: ${PAYMENT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PAYMENT_POSTGRES_PASSWORD}
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+
+  Kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: ${KAFKA_CONTAINER_NAME}
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_NODE_ID: ${KAFKA_NODE_ID}
+      KAFKA_PROCESS_ROLES: ${KAFKA_PROCESS_ROLES}
+      KAFKA_LISTENERS: ${KAFKA_LISTENERS}
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_CONTROLLER_QUORUM_VOTERS: ${KAFKA_CONTROLLER_QUORUM_VOTERS}
+      KAFKA_CONTROLLER_LISTENER_NAMES: ${KAFKA_CONTROLLER_LISTENER_NAMES}
+      KAFKA_LOG_DIRS: ${KAFKA_LOG_DIRS}
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_AUTO_CREATE_TOPICS_ENABLE}
+      KAFKA_DELETE_TOPIC_ENABLE: ${KAFKA_DELETE_TOPIC_ENABLE}
+      CLUSTER_ID: ${CLUSTER_ID}
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+
+volumes:
+  user-db-data:
+  product-db-data:
+  order-db-data:
+  payment-db-data:
+  kafka-data:
