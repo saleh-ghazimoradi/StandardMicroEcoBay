@@ -61,7 +61,7 @@ func (a *APIError) RateLimitExceededResponse(w http.ResponseWriter, r *http.Requ
 	a.ErrorResponse(w, r, http.StatusTooManyRequests, message)
 }
 
-func NewCustomErr(logger *slog.Logger) *APIError {
+func NewAPIError(logger *slog.Logger) *APIError {
 	return &APIError{
 		logger: logger,
 	}
