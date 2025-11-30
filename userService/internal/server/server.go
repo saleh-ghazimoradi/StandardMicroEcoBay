@@ -37,6 +37,12 @@ func WithPort(port string) Options {
 	}
 }
 
+func WithHandler(h http.Handler) Options {
+	return func(s *Server) {
+		s.Handler = h
+	}
+}
+
 func WithIdleTimeout(idleTimeout time.Duration) Options {
 	return func(s *Server) {
 		s.IdleTimeout = idleTimeout
