@@ -15,6 +15,7 @@ type Config struct {
 	Postgresql  Postgresql
 	Server      Server
 	Application Application
+	Kafka       Kafka
 }
 
 func GetInstance() (*Config, error) {
