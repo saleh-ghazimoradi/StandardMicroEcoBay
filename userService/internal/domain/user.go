@@ -13,4 +13,5 @@ type User struct {
 	Address    Address   `json:"address"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+	Version    int       `json:"version"`
 }
