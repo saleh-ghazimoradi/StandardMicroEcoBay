@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_addresses_user_id ON addresses (user_id);
