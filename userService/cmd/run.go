@@ -7,6 +7,7 @@ import (
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/handlers"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/routes"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/helper"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/middleware"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/server"
 	"log/slog"
 	"os"
@@ -56,10 +57,12 @@ var runCmd = &cobra.Command{
 		}()
 
 		apiError := helper.NewAPIError(logger)
+		middlewares := middleware.NewMiddleware()
 		healthHandler := handlers.NewHealthHandler(logger, cfg, apiError)
 		healthRoute := routes.NewHealthRoute(healthHandler)
 		registerRoutes := routes.NewRegister(
 			routes.WithAPIError(apiError),
+			routes.WithMiddleware(middlewares),
 			routes.WithHealthRoute(healthRoute),
 		)
 

@@ -3,11 +3,13 @@ package routes
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/helper"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/middleware"
 	"net/http"
 )
 
 type Register struct {
 	apiError    *helper.APIError
+	middleware  *middleware.Middleware
 	healthRoute *HealthRoutes
 }
 
@@ -25,12 +27,18 @@ func WithHealthRoute(healthRoute *HealthRoutes) Options {
 	}
 }
 
+func WithMiddleware(middleware *middleware.Middleware) Options {
+	return func(r *Register) {
+		r.middleware = middleware
+	}
+}
+
 func (r *Register) RegisterRoutes() http.Handler {
 	router := httprouter.New()
 	router.NotFound = http.HandlerFunc(r.apiError.NotFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(r.apiError.MethodNotAllowedResponse)
 	r.healthRoute.HealthRoute(router)
-	return router
+	return r.middleware.RecoverPanic(router)
 }
 
 func NewRegister(opts ...Options) *Register {
