@@ -57,7 +57,7 @@ var runCmd = &cobra.Command{
 		}()
 
 		apiError := helper.NewAPIError(logger)
-		middlewares := middleware.NewMiddleware()
+		middlewares := middleware.NewMiddleware(cfg, apiError)
 		healthHandler := handlers.NewHealthHandler(logger, cfg, apiError)
 		healthRoute := routes.NewHealthRoute(healthHandler)
 		registerRoutes := routes.NewRegister(

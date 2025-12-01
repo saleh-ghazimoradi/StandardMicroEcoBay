@@ -37,8 +37,10 @@ func (r *Register) RegisterRoutes() http.Handler {
 	router := httprouter.New()
 	router.NotFound = http.HandlerFunc(r.apiError.NotFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(r.apiError.MethodNotAllowedResponse)
+
 	r.healthRoute.HealthRoute(router)
-	return r.middleware.RecoverPanic(router)
+
+	return r.middleware.RecoverPanic(r.middleware.RateLimit(router))
 }
 
 func NewRegister(opts ...Options) *Register {

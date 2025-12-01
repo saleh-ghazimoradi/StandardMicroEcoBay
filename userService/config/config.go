@@ -16,6 +16,7 @@ type Config struct {
 	Server      Server
 	Application Application
 	Kafka       Kafka
+	RateLimit   RateLimit
 }
 
 func GetInstance() (*Config, error) {
