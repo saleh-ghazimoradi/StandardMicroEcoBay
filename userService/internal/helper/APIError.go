@@ -61,6 +61,11 @@ func (a *APIError) RateLimitExceededResponse(w http.ResponseWriter, r *http.Requ
 	a.ErrorResponse(w, r, http.StatusTooManyRequests, message)
 }
 
+func (a *APIError) InvalidCredentialsResponse(w http.ResponseWriter, r *http.Request, err error) {
+	message := "invalid credentials, please try again"
+	a.ErrorResponse(w, r, http.StatusUnauthorized, message)
+}
+
 func NewAPIError(logger *slog.Logger) *APIError {
 	return &APIError{
 		logger: logger,
