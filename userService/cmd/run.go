@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/config"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/infra/postgresql"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/auth"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/handlers"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/middlewares"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/routes"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/helper"
-	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/middleware"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/repository"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/server"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/service"
 	"log/slog"
 	"os"
 
@@ -30,6 +33,7 @@ var runCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		/*-----------------------POSTGRESQL-----------------------*/
 		postgresql := postgresql.NewPostgresql(
 			postgresql.WithHost(cfg.Postgresql.Host),
 			postgresql.WithPort(cfg.Postgresql.Port),
@@ -56,16 +60,30 @@ var runCmd = &cobra.Command{
 			}
 		}()
 
+		/*-----------------------DEPENDENCY-----------------------*/
 		apiError := helper.NewAPIError(logger)
-		middlewares := middleware.NewMiddleware(cfg, apiError)
+		middlewares := middlewares.NewMiddlewares(cfg, apiError)
+		authenticator := auth.NewAuthenticator(cfg.Application.JWTSecret, cfg.Application.JWTExp)
+
+		/*-----------------------HEALTHCHECK-----------------------*/
 		healthHandler := handlers.NewHealthHandler(logger, cfg, apiError)
 		healthRoute := routes.NewHealthRoute(healthHandler)
+
+		/*-----------------------USER-----------------------*/
+		userRepository := repository.NewUserRepository(postgresqlDB, postgresqlDB)
+		userService := service.NewUserService(userRepository)
+		userHandler := handlers.NewUserHandler(apiError, authenticator, userService)
+		userRoute := routes.NewUserRoutes(userHandler, authenticator)
+
+		/*-----------------------ROUTES REGISTER-----------------------*/
 		registerRoutes := routes.NewRegister(
 			routes.WithAPIError(apiError),
 			routes.WithMiddleware(middlewares),
 			routes.WithHealthRoute(healthRoute),
+			routes.WithUserRoute(userRoute),
 		)
 
+		/*-----------------------SERVER-----------------------*/
 		httpServer := server.NewServer(
 			server.WithPort(cfg.Server.Port),
 			server.WithHost(cfg.Server.Host),
