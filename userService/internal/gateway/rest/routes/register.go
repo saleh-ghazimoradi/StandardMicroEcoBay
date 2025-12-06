@@ -2,15 +2,16 @@ package routes
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/gateway/rest/middlewares"
 	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/helper"
-	"github.com/saleh-ghazimoradi/StandardMicroEcoBay/internal/middleware"
 	"net/http"
 )
 
 type Register struct {
 	apiError    *helper.APIError
-	middleware  *middleware.Middleware
+	middleware  *middlewares.Middlewares
 	healthRoute *HealthRoutes
+	userRoute   *UserRoutes
 }
 
 type Options func(*Register)
@@ -27,7 +28,13 @@ func WithHealthRoute(healthRoute *HealthRoutes) Options {
 	}
 }
 
-func WithMiddleware(middleware *middleware.Middleware) Options {
+func WithUserRoute(userRoute *UserRoutes) Options {
+	return func(r *Register) {
+		r.userRoute = userRoute
+	}
+}
+
+func WithMiddleware(middleware *middlewares.Middlewares) Options {
 	return func(r *Register) {
 		r.middleware = middleware
 	}
@@ -39,6 +46,7 @@ func (r *Register) RegisterRoutes() http.Handler {
 	router.MethodNotAllowed = http.HandlerFunc(r.apiError.MethodNotAllowedResponse)
 
 	r.healthRoute.HealthRoute(router)
+	r.userRoute.UserRoute(router)
 
 	return r.middleware.RecoverPanic(r.middleware.RateLimit(router))
 }
