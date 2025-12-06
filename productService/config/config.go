@@ -15,6 +15,7 @@ type Config struct {
 	Application Application
 	Postgresql  Postgresql
 	Server      Server
+	RateLimit   RateLimit
 }
 
 func GetInstance() (*Config, error) {
