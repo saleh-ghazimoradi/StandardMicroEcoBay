@@ -79,6 +79,12 @@ func (m *Middleware) RateLimit(next http.Handler) http.Handler {
 	})
 }
 
+func (m *Middleware) Authentication(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		
+	})
+}
+
 func NewMiddleware(config *config.Config, apiError *helper.APIError) *Middleware {
 	return &Middleware{
 		config:   config,
