@@ -1,4 +1,4 @@
-package middleware
+package middlewares
 
 import (
 	"fmt"
@@ -16,12 +16,12 @@ type client struct {
 	lastSeen time.Time
 }
 
-type Middleware struct {
+type Middlewares struct {
 	config   *config.Config
 	apiError *helper.APIError
 }
 
-func (m *Middleware) RecoverPanic(next http.Handler) http.Handler {
+func (m *Middlewares) RecoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
@@ -33,7 +33,7 @@ func (m *Middleware) RecoverPanic(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) RateLimit(next http.Handler) http.Handler {
+func (m *Middlewares) RateLimit(next http.Handler) http.Handler {
 	if !m.config.RateLimit.Enabled {
 		return next
 	}
@@ -79,14 +79,8 @@ func (m *Middleware) RateLimit(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) Authentication(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		
-	})
-}
-
-func NewMiddleware(config *config.Config, apiError *helper.APIError) *Middleware {
-	return &Middleware{
+func NewMiddlewares(config *config.Config, apiError *helper.APIError) *Middlewares {
+	return &Middlewares{
 		config:   config,
 		apiError: apiError,
 	}
